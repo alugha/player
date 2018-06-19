@@ -14,8 +14,6 @@
     ],
     "jsdoc-format": true,
     "interface-name": false,
-    "no-namespace": false,
-    "max-classes-per-file": false,
-    "no-reference": false
+    "max-classes-per-file": false
   }
 }
