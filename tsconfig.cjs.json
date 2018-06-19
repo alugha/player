@@ -1,9 +1,7 @@
 {
-  "extends": "./tsconfig",
+  "extends": "./tsconfig.base",
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "./lib/cjs",
-    "declaration": false,
-    "declarationDir": null
+    "outDir": "./lib/cjs"
   }
 }
