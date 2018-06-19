@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",
+    "lib": ["dom", "es5", "es2015", "es2016.array.include", "es2017.object"],
+    "outDir": "./lib/esm",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "declaration": true,
+    "declarationDir": "./lib/typings"
+  },
+  "include": ["./typings/**/*", "./src/**/*"],
+  "exclude": ["./node_modules", "./lib"]
+}

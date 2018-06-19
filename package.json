@@ -1,0 +1,53 @@
+{
+  "name": "player-js",
+  "version": "1.0.0",
+  "description": "A statically typed, lightweight and compatible alternative to Embedly's player.js",
+  "repository": "https://github.com/alugha/player-js",
+  "bugs": "https://github.com/alugha/player-js/issues",
+  "author": "Alugha GmbH <hello@alugha.com> (https://alugha.com/)",
+  "maintainers": [
+    "Niklas Korz <nk@alugha.com>"
+  ],
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/cjs/index.js",
+  "jsnext:main": "lib/esm/index.js",
+  "module": "lib/esm/index.js",
+  "typings": "lib/typings/index.d.ts",
+  "scripts": {
+    "precommit": "lint-staged",
+    "prepare": "yarn compile",
+    "lint": "yarn lint:cmd src/**/*.ts",
+    "lint:cmd": "tslint -p tsconfig.json -c tslint.json",
+    "precompile": "rimraf lib",
+    "compile": "yarn compile:esm && yarn compile:cjs",
+    "compile:esm": "tsc --project tsconfig.json",
+    "compile:cjs": "tsc --project tsconfig.cjs.json"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "yarn lint:cmd --fix",
+      "git add"
+    ],
+    "*.md": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.13.5",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^2.9.2"
+  }
+}
