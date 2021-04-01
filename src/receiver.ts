@@ -44,7 +44,7 @@ const supportedMethods = Object.values(MethodType);
 
 export type ResponseType = EventType | MethodType;
 
-type MethodHandler = <T, Ret>(value: T) => Ret;
+type MethodHandler<Arg, Ret> = (value: Arg) => Ret;
 
 interface MethodRequest<T> {
   context: string;
@@ -64,14 +64,22 @@ interface MethodResponse<T> {
 
 // Custom implementation of player.js provider
 export class Receiver {
+  private active = false;
   private isReady = false;
   private origin = "";
   private reject = true;
-  private methodHandlers: Map<MethodType, MethodHandler> = new Map();
+  private methodHandlers: Map<
+    MethodType,
+    MethodHandler<unknown, unknown>
+  > = new Map();
   private eventListeners: Map<EventType, Set<string>> = new Map();
 
   // Requires a browser environment
   public activate(): void {
+    if (this.active) {
+      return;
+    }
+    this.active = true;
     this.origin = parseOrigin(document.referrer);
     this.reject = window.self === window.top || !window.postMessage;
     if (!this.reject) {
@@ -80,12 +88,19 @@ export class Receiver {
   }
 
   public deactivate(): void {
+    if (!this.active) {
+      return;
+    }
+    this.active = false;
     this.origin = "";
     this.reject = true;
     window.removeEventListener("message", this.receive);
   }
 
-  public on(methodType: MethodType, callback: MethodHandler): void {
+  public on(
+    methodType: MethodType,
+    callback: MethodHandler<any, unknown>
+  ): void {
     this.methodHandlers.set(methodType, callback);
   }
 
@@ -218,5 +233,3 @@ export class Receiver {
     return true;
   }
 }
-
-export default Receiver;

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "target": "es5",
     "lib": ["dom", "es5", "es2015", "es2016.array.include", "es2017.object"],
     "strict": true,
     "noImplicitAny": true,
