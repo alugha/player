@@ -1,69 +1,69 @@
-import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from './constants';
+import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants";
 
 const parseOrigin = (url: string) =>
-  (url.substr(0, 2) === '//' ? window.location.protocol : '') +
-  url
-    .split('/')
-    .slice(0, 3)
-    .join('/');
+  (url.substr(0, 2) === "//" ? window.location.protocol : "") +
+  url.split("/").slice(0, 3).join("/");
+
+const isString = (value: unknown): value is string =>
+  typeof value === "string" || value instanceof String;
 
 export enum EventType {
-  Ready = 'ready',
-  Play = 'play',
-  Pause = 'pause',
-  Ended = 'ended',
-  Timeupdate = 'timeupdate',
-  Progress = 'progress',
-  Seeked = 'seeked',
-  Error = 'error',
+  Ready = "ready",
+  Play = "play",
+  Pause = "pause",
+  Ended = "ended",
+  Timeupdate = "timeupdate",
+  Progress = "progress",
+  Seeked = "seeked",
+  Error = "error",
 }
 
 const supportedEvents = Object.values(EventType);
 
 export enum MethodType {
-  Play = 'play',
-  Pause = 'pause',
-  GetPaused = 'getPaused',
-  Mute = 'mute',
-  Unmute = 'unmute',
-  GetMuted = 'getMuted',
-  SetVolume = 'setVolume',
-  GetVolume = 'getVolume',
-  GetDuration = 'getDuration',
-  SetCurrentTime = 'setCurrentTime',
-  GetCurrentTime = 'getCurrentTime',
-  SetLoop = 'setLoop',
-  GetLoop = 'getLoop',
-  RemoveEventListener = 'removeEventListener',
-  AddEventListener = 'addEventListener',
+  Play = "play",
+  Pause = "pause",
+  GetPaused = "getPaused",
+  Mute = "mute",
+  Unmute = "unmute",
+  GetMuted = "getMuted",
+  SetVolume = "setVolume",
+  GetVolume = "getVolume",
+  GetDuration = "getDuration",
+  SetCurrentTime = "setCurrentTime",
+  GetCurrentTime = "getCurrentTime",
+  SetLoop = "setLoop",
+  GetLoop = "getLoop",
+  RemoveEventListener = "removeEventListener",
+  AddEventListener = "addEventListener",
 }
 const supportedMethods = Object.values(MethodType);
 
 export type ResponseType = EventType | MethodType;
 
-type MethodHandler = (value?: any) => any;
+type MethodHandler = <T, Ret>(value?: T) => Ret;
 
-interface MethodRequest {
+interface MethodRequest<T> {
   context: string;
   version: string;
   method: MethodType;
-  value?: any;
+  value?: T;
   listener?: string;
 }
 
-interface MethodResponse {
+interface MethodResponse<T> {
   context: string;
   version: string;
   event: ResponseType;
-  value?: any;
+  value?: T;
   listener?: string;
 }
 
 // Custom implementation of player.js provider
 export class Receiver {
-  private isReady: boolean = false;
-  private origin: string = '';
-  private reject: boolean = true;
+  private isReady = false;
+  private origin = "";
+  private reject = true;
   private methodHandlers: Map<MethodType, MethodHandler> = new Map();
   private eventListeners: Map<EventType, Set<string>> = new Map();
 
@@ -72,26 +72,26 @@ export class Receiver {
     this.origin = parseOrigin(document.referrer);
     this.reject = window.self === window.top || !window.postMessage;
     if (!this.reject) {
-      window.addEventListener('message', this.receive);
+      window.addEventListener("message", this.receive);
     }
   }
 
   public deactivate(): void {
-    this.origin = '';
+    this.origin = "";
     this.reject = true;
-    window.removeEventListener('message', this.receive);
+    window.removeEventListener("message", this.receive);
   }
 
   public on(methodType: MethodType, callback: MethodHandler): void {
     this.methodHandlers.set(methodType, callback);
   }
 
-  public emit(eventType: EventType, value?: any): boolean {
+  public emit<T>(eventType: EventType, value?: T): boolean {
     const listeners = this.eventListeners.get(eventType);
     if (!listeners) {
       return false;
     }
-    listeners.forEach(listener => this.send(eventType, value, listener));
+    listeners.forEach((listener) => this.send(eventType, value, listener));
     return true;
   }
 
@@ -112,8 +112,8 @@ export class Receiver {
       return false;
     }
 
-    let data: MethodRequest;
-    if (typeof e.data === 'string' || e instanceof String) {
+    let data: MethodRequest<unknown>;
+    if (isString(e.data)) {
       try {
         data = JSON.parse(e.data);
       } catch (ex) {
@@ -136,17 +136,17 @@ export class Receiver {
     }
 
     if (data.method === MethodType.AddEventListener) {
-      if (!data.listener) {
+      if (!data.listener || !isString(data.value)) {
         return false;
       }
-      this.addEventListener(data.value, data.listener);
+      this.addEventListener(data.value as EventType, data.listener);
       return true;
     }
     if (data.method === MethodType.RemoveEventListener) {
-      if (!data.listener) {
+      if (!data.listener || !isString(data.value)) {
         return false;
       }
-      this.removeEventListener(data.value, data.listener);
+      this.removeEventListener(data.value as EventType, data.listener);
       return true;
     }
     return this.invoke(data.method, data.value, data.listener);
@@ -174,8 +174,8 @@ export class Receiver {
 
   private invoke(
     methodType: MethodType,
-    value?: any,
-    listener?: string,
+    value?: unknown,
+    listener?: string
   ): boolean {
     const handler = this.methodHandlers.get(methodType);
     if (!handler) {
@@ -195,14 +195,14 @@ export class Receiver {
 
   private send(
     responseType: ResponseType,
-    value?: any,
-    listener?: string,
+    value?: unknown,
+    listener?: string
   ): boolean {
     if (this.reject) {
       return false;
     }
 
-    const data: MethodResponse = {
+    const data: MethodResponse<unknown> = {
       context: PLAYERJS_CONTEXT,
       event: responseType,
       listener,
@@ -211,7 +211,7 @@ export class Receiver {
     };
 
     const msg = JSON.stringify(data);
-    window.parent.postMessage(msg, this.origin || '*');
+    window.parent.postMessage(msg, this.origin || "*");
     return true;
   }
 }
