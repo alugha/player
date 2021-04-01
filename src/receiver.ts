@@ -20,6 +20,9 @@ export enum EventType {
 
 const supportedEvents = Object.values(EventType);
 
+const isSupportedEvent = (value: unknown): value is EventType =>
+  supportedEvents.includes(value as EventType);
+
 export enum MethodType {
   Play = "play",
   Pause = "pause",
@@ -136,17 +139,17 @@ export class Receiver {
     }
 
     if (data.method === MethodType.AddEventListener) {
-      if (!data.listener || !isString(data.value)) {
+      if (!data.listener || !isSupportedEvent(data.value)) {
         return false;
       }
       this.addEventListener(data.value as EventType, data.listener);
       return true;
     }
     if (data.method === MethodType.RemoveEventListener) {
-      if (!data.listener || !isString(data.value)) {
+      if (!data.listener || !isSupportedEvent(data.value)) {
         return false;
       }
-      this.removeEventListener(data.value as EventType, data.listener);
+      this.removeEventListener(data.value, data.listener);
       return true;
     }
     return this.invoke(data.method, data.value, data.listener);
