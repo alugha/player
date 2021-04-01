@@ -1,5 +1,5 @@
 {
-  "name": "player-js",
+  "name": "@alugha/player-js",
   "version": "0.0.1",
   "description": "A statically typed, lightweight and compatible alternative to Embedly's player.js",
   "repository": "https://github.com/alugha/player-js",
