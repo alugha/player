@@ -41,13 +41,13 @@ const supportedMethods = Object.values(MethodType);
 
 export type ResponseType = EventType | MethodType;
 
-type MethodHandler = <T, Ret>(value?: T) => Ret;
+type MethodHandler = <T, Ret>(value: T) => Ret;
 
 interface MethodRequest<T> {
   context: string;
   version: string;
   method: MethodType;
-  value?: T;
+  value: T;
   listener?: string;
 }
 
@@ -55,7 +55,7 @@ interface MethodResponse<T> {
   context: string;
   version: string;
   event: ResponseType;
-  value?: T;
+  value: T;
   listener?: string;
 }
 
@@ -174,7 +174,7 @@ export class Receiver {
 
   private invoke(
     methodType: MethodType,
-    value?: unknown,
+    value: unknown,
     listener?: string
   ): boolean {
     const handler = this.methodHandlers.get(methodType);
@@ -195,7 +195,7 @@ export class Receiver {
 
   private send(
     responseType: ResponseType,
-    value?: unknown,
+    value: unknown,
     listener?: string
   ): boolean {
     if (this.reject) {
