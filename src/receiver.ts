@@ -1,4 +1,4 @@
-import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants";
+import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants.js";
 import {
   EventType,
   MethodHandler,
@@ -6,8 +6,8 @@ import {
   ResponseType,
   MethodRequest,
   MethodResponse,
-} from "./data";
-import { isString, parseOrigin } from "./utils";
+} from "./data.js";
+import { isString, parseOrigin } from "./utils.js";
 
 const supportedEvents = Object.values(EventType);
 const supportedMethods = Object.values(MethodType);
@@ -134,7 +134,15 @@ export class Receiver {
     }
 
     if (eventType === EventType.Ready && this.isReady) {
-      this.ready();
+      this.send(
+        EventType.Ready,
+        {
+          events: supportedEvents,
+          methods: supportedMethods,
+          src: window.location.href,
+        },
+        listener,
+      );
     }
   }
 

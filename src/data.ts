@@ -14,12 +14,12 @@ export interface EventData {
   [EventType.Play]: void;
   [EventType.Pause]: void;
   [EventType.Ended]: void;
-  [EventType.Progress]: {
-    percent: number;
-  };
   [EventType.Timeupdate]: {
     seconds: number;
     duration: number;
+  };
+  [EventType.Progress]: {
+    percent: number;
   };
   [EventType.Seeked]: void;
   [EventType.Error]: void;

@@ -22,7 +22,8 @@
     "precompile": "rimraf lib",
     "compile": "yarn compile:esm && yarn compile:cjs",
     "compile:esm": "tsc --project tsconfig.json",
-    "compile:cjs": "tsc --project tsconfig.cjs.json"
+    "compile:cjs": "tsc --project tsconfig.cjs.json",
+    "example": "yarn compile && rimraf example/lib && cp -r lib example/lib && serve example"
   },
   "lint-staged": {
     "*.{js,ts,json}": [
@@ -44,6 +45,7 @@
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
+    "serve": "^14.2.1",
     "typescript": "^5.3.3"
   }
 }

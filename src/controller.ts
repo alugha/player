@@ -1,12 +1,20 @@
-import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants";
-import { EventType, EventData, MethodRequest, MethodType } from "./data";
-import { isString, parseOrigin } from "./utils";
+import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants.js";
+import {
+  EventType,
+  EventData,
+  MethodRequest,
+  MethodType,
+  MethodResponse,
+} from "./data.js";
+import { isString, parseOrigin } from "./utils.js";
 
 type Callback<T> = (data: T) => void;
 
 export class Controller {
   private iframe: HTMLIFrameElement;
   private origin: string;
+  private isReady = false;
+  private queue: MethodRequest<unknown>[] = [];
   private callbacks: Map<string, Callback<unknown>> = new Map();
   private listeners: Map<Callback<unknown>, string> = new Map();
 
@@ -29,6 +37,15 @@ export class Controller {
     }
 
     this.origin = parseOrigin(this.iframe.src);
+    this.activate();
+  }
+
+  public activate() {
+    window.addEventListener("message", this.receive);
+  }
+
+  public destroy() {
+    window.removeEventListener("message", this.receive);
   }
 
   public on<T extends EventType>(event: T, callback: Callback<EventData[T]>) {
@@ -114,11 +131,6 @@ export class Controller {
       }
     }
 
-    const contentWindow = this.iframe.contentWindow;
-    if (!contentWindow) {
-      return false;
-    }
-
     const request: MethodRequest<typeof value> = {
       context: PLAYERJS_CONTEXT,
       version: PLAYERJS_VERSION,
@@ -126,8 +138,18 @@ export class Controller {
       value,
       listener,
     };
-    contentWindow.postMessage(request, this.origin);
+
+    if (!this.isReady) {
+      this.queue.push(request as MethodRequest<unknown>);
+      return false;
+    }
+
+    this.postMessage(request);
     return true;
+  }
+
+  private postMessage<T>(message: T) {
+    this.iframe.contentWindow?.postMessage(message, this.origin);
   }
 
   private addListener<Ret>(callback: Callback<Ret>): string {
@@ -156,4 +178,45 @@ export class Controller {
       this.send(method, undefined, callback);
     });
   }
+
+  private onReady = () => {
+    this.isReady = true;
+    for (const request of this.queue) {
+      this.postMessage(request);
+    }
+    this.queue = [];
+  };
+
+  private receive = (e: MessageEvent) => {
+    if (e.origin !== this.origin) {
+      return;
+    }
+
+    let data: MethodResponse<unknown>;
+    if (isString(e.data)) {
+      try {
+        data = JSON.parse(e.data);
+      } catch (ex) {
+        return;
+      }
+    } else {
+      data = e.data;
+    }
+
+    if (data.context !== PLAYERJS_CONTEXT) {
+      return;
+    }
+
+    if (!data.listener) {
+      if (data.event === EventType.Ready) {
+        this.onReady();
+      }
+      return;
+    }
+
+    const callback = this.callbacks.get(data.listener);
+    if (callback) {
+      callback(data.value);
+    }
+  };
 }

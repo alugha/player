@@ -1,5 +1,5 @@
-import { Controller } from "./controller";
-import { isString } from "./utils";
+import { Controller } from "./controller.js";
+import { isString } from "./utils.js";
 
 export interface ResponsiveSize {
   /**
@@ -109,6 +109,11 @@ export interface PlayerOptions {
    */
   size?: ResponsiveSize | StaticSize;
   /**
+   * If enabled, the player will replace the provided `mountPoint`
+   * instead of appending itself as a child.
+   */
+  replaceMountPoint?: boolean;
+  /**
    * Defaults to https://alugha.com
    */
   base?: string;
@@ -128,11 +133,12 @@ export class Player extends Controller {
     autoPlay = false,
     loop = false,
     muted = false,
-    targetScreenResolution,
+    targetScreenResolution = false,
     allowFullscreen = true,
     allowPictureInPicture = true,
-    hideAlughaLogo,
+    hideAlughaLogo = false,
     size = { aspectRatio: 16 / 9 },
+    replaceMountPoint = false,
     base = "https://alugha.com",
   }: PlayerOptions) {
     const params = new URLSearchParams({ v: videoId });
@@ -227,13 +233,17 @@ export class Player extends Controller {
     }
 
     if (isString(mountPoint)) {
-      const parent = document.getElementById(mountPoint);
-      if (!parent) {
+      const element = document.getElementById(mountPoint);
+      if (!element) {
         throw new Error(
           `The element id provided for the player mount point does not exist: ${mountPoint}`,
         );
       }
-      parent.appendChild(container);
+      mountPoint = element;
+    }
+
+    if (replaceMountPoint) {
+      mountPoint.parentElement?.replaceChild(container, mountPoint);
     } else {
       mountPoint.appendChild(container);
     }

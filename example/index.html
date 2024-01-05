@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <div id="player"></div>
+    <p>
+      <button id="btn-seek">Seek to 42 seconds</button>
+      <button id="btn-mute">Toggle mute</button>
+      <button id="btn-play">Play</button>
+      <button id="btn-pause">Pause</button>
+    </p>
+    <pre id="logs"></pre>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "@alugha/player": "./lib/esm/index.js"
+      }
+    }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
