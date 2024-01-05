@@ -1,60 +1,19 @@
 import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants";
+import {
+  EventType,
+  MethodHandler,
+  MethodType,
+  ResponseType,
+  MethodRequest,
+  MethodResponse,
+} from "./data";
 import { isString, parseOrigin } from "./utils";
 
-export enum EventType {
-  Ready = "ready",
-  Play = "play",
-  Pause = "pause",
-  Ended = "ended",
-  Timeupdate = "timeupdate",
-  Progress = "progress",
-  Seeked = "seeked",
-  Error = "error",
-}
-
 const supportedEvents = Object.values(EventType);
+const supportedMethods = Object.values(MethodType);
 
 const isSupportedEvent = (value: unknown): value is EventType =>
   supportedEvents.includes(value as EventType);
-
-export enum MethodType {
-  Play = "play",
-  Pause = "pause",
-  GetPaused = "getPaused",
-  Mute = "mute",
-  Unmute = "unmute",
-  GetMuted = "getMuted",
-  SetVolume = "setVolume",
-  GetVolume = "getVolume",
-  GetDuration = "getDuration",
-  SetCurrentTime = "setCurrentTime",
-  GetCurrentTime = "getCurrentTime",
-  SetLoop = "setLoop",
-  GetLoop = "getLoop",
-  RemoveEventListener = "removeEventListener",
-  AddEventListener = "addEventListener",
-}
-const supportedMethods = Object.values(MethodType);
-
-export type ResponseType = EventType | MethodType;
-
-type MethodHandler<Arg, Ret> = (value: Arg) => Ret;
-
-interface MethodRequest<T> {
-  context: string;
-  version: string;
-  method: MethodType;
-  value: T;
-  listener?: string;
-}
-
-interface MethodResponse<T> {
-  context: string;
-  version: string;
-  event: ResponseType;
-  value: T;
-  listener?: string;
-}
 
 // Custom implementation of player.js provider
 export class Receiver {
@@ -62,6 +21,7 @@ export class Receiver {
   private isReady = false;
   private origin = "";
   private reject = true;
+  private controllerSupportsStructuredData = false;
   private methodHandlers: Map<MethodType, MethodHandler<unknown, unknown>> =
     new Map();
   private eventListeners: Map<EventType, Set<string>> = new Map();
@@ -101,7 +61,9 @@ export class Receiver {
     if (!listeners) {
       return false;
     }
-    listeners.forEach((listener) => this.send(eventType, value, listener));
+    for (const listener of listeners) {
+      this.send(eventType, value, listener);
+    }
     return true;
   }
 
@@ -130,6 +92,7 @@ export class Receiver {
         return false;
       }
     } else {
+      this.controllerSupportsStructuredData = true;
       data = e.data;
     }
 
@@ -214,13 +177,15 @@ export class Receiver {
 
     const data: MethodResponse<unknown> = {
       context: PLAYERJS_CONTEXT,
+      version: PLAYERJS_VERSION,
       event: responseType,
       listener,
       value,
-      version: PLAYERJS_VERSION,
     };
 
-    const msg = JSON.stringify(data);
+    const msg = this.controllerSupportsStructuredData
+      ? data
+      : JSON.stringify(data);
     window.parent.postMessage(msg, this.origin || "*");
     return true;
   }

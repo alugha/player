@@ -1,3 +1,4 @@
+import { Controller } from "./controller";
 import { isString } from "./utils";
 
 export interface ResponsiveSize {
@@ -113,7 +114,7 @@ export interface PlayerOptions {
   base?: string;
 }
 
-export class Player {
+export class Player extends Controller {
   constructor({
     videoId,
     mountPoint,
@@ -236,5 +237,7 @@ export class Player {
     } else {
       mountPoint.appendChild(container);
     }
+
+    super(iframe);
   }
 }
