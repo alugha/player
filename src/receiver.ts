@@ -1,7 +1,7 @@
 import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants";
 
 const parseOrigin = (url: string) =>
-  (url.substr(0, 2) === "//" ? window.location.protocol : "") +
+  (url.slice(0, 2) === "//" ? window.location.protocol : "") +
   url.split("/").slice(0, 3).join("/");
 
 const isString = (value: unknown): value is string =>
@@ -68,10 +68,8 @@ export class Receiver {
   private isReady = false;
   private origin = "";
   private reject = true;
-  private methodHandlers: Map<
-    MethodType,
-    MethodHandler<unknown, unknown>
-  > = new Map();
+  private methodHandlers: Map<MethodType, MethodHandler<unknown, unknown>> =
+    new Map();
   private eventListeners: Map<EventType, Set<string>> = new Map();
 
   // Requires a browser environment
@@ -99,7 +97,7 @@ export class Receiver {
 
   public on(
     methodType: MethodType,
-    callback: MethodHandler<any, unknown>
+    callback: MethodHandler<unknown, unknown>,
   ): void {
     this.methodHandlers.set(methodType, callback);
   }
@@ -193,7 +191,7 @@ export class Receiver {
   private invoke(
     methodType: MethodType,
     value: unknown,
-    listener?: string
+    listener?: string,
   ): boolean {
     const handler = this.methodHandlers.get(methodType);
     if (!handler) {
@@ -214,7 +212,7 @@ export class Receiver {
   private send(
     responseType: ResponseType,
     value: unknown,
-    listener?: string
+    listener?: string,
   ): boolean {
     if (this.reject) {
       return false;
