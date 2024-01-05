@@ -1,9 +1,9 @@
 {
-  "name": "@alugha/player-js",
-  "version": "0.0.1",
+  "name": "@alugha/player",
+  "version": "0.1.0",
   "description": "A statically typed, lightweight and compatible alternative to Embedly's player.js",
-  "repository": "https://github.com/alugha/player-js",
-  "bugs": "https://github.com/alugha/player-js/issues",
+  "repository": "https://github.com/alugha/player",
+  "bugs": "https://github.com/alugha/player/issues",
   "author": "Alugha GmbH <hello@alugha.com> (https://alugha.com/)",
   "maintainers": [
     "Niklas Korz <nk@alugha.com>"
