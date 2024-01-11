@@ -1,7 +1,7 @@
 {
   "name": "@alugha/player",
   "version": "0.1.0",
-  "description": "A statically typed, lightweight and compatible alternative to Embedly's player.js",
+  "description": "A lightweight SDK for embedding and controlling the alugha player.",
   "repository": "https://github.com/alugha/player",
   "bugs": "https://github.com/alugha/player/issues",
   "author": "Alugha GmbH <hello@alugha.com> (https://alugha.com/)",
@@ -23,7 +23,9 @@
     "compile": "yarn compile:esm && yarn compile:cjs",
     "compile:esm": "tsc --project tsconfig.json",
     "compile:cjs": "tsc --project tsconfig.cjs.json",
-    "example": "yarn compile && rimraf example/lib && cp -r lib example/lib && serve example"
+    "example": "yarn compile && rimraf example/lib && cp -r lib example/lib && serve example",
+    "docs:build": "typedoc src",
+    "docs": "yarn docs:build && serve docs"
   },
   "lint-staged": {
     "*.{js,ts,json}": [
@@ -46,6 +48,7 @@
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
     "serve": "^14.2.1",
+    "typedoc": "^0.25.7",
     "typescript": "^5.3.3"
   }
 }

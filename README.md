@@ -1,4 +1,4 @@
-# @alugha/player SDK
+# alugha player SDK
 
 This is the SDK for the alugha player. You can install it from npm:
 
