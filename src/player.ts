@@ -145,6 +145,14 @@ export interface PlayerOptions {
    */
   hideAlughaLogo?: boolean;
   /**
+   * Whether the player controls should be hidden.
+   * This does not have any effect if your alugha subscription does not support
+   * this feature.
+   *
+   * Defaults to false.
+   */
+  hideControls?: boolean;
+  /**
    * The size of the embedded player. This can be an aspect ratio for responsive
    * scaling of the player, or a static width and height in logical pixels.
    * Logical pixels do not always equal physical pixels. For example, if the
@@ -186,6 +194,7 @@ export class Player extends Controller {
       allowFullscreen = true,
       allowPictureInPicture = true,
       hideAlughaLogo = false,
+      hideControls = false,
       size = { aspectRatio: 16 / 9 },
       replaceMountPoint = false,
       base = "https://alugha.com",
@@ -254,6 +263,10 @@ export class Player extends Controller {
 
     if (hideAlughaLogo) {
       params.set("alugha", "0");
+    }
+
+    if (hideControls) {
+      params.set("controls", "0");
     }
 
     const url = new URL("/embed/web-player", base);
