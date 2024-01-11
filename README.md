@@ -11,10 +11,8 @@ yarn add @alugha/player
 
 ## Example
 
-You can find an interactive example in `example/`.
-Execution of the example requires `yarn`.
-First install the development dependencies with `yarn install`.
-Then run `yarn example`
+You can find an interactive example on <https://alugha.github.io/player/example/>.
+The code for the example is located at <https://github.com/alugha/player/tree/main/example>.
 
 ## Usage
 

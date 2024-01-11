@@ -12,8 +12,8 @@ function println(message) {
   logs.textContent = message + "\n" + logs.textContent;
 }
 
-player.on("ready", () => {
-  println("Event: ready");
+player.on("ready", (ready) => {
+  println("Event: ready " + JSON.stringify(ready, null, 2));
 });
 
 player.on("play", () => {
@@ -28,20 +28,37 @@ player.on("ended", () => {
   println("Event: ended");
 });
 
+// this can be a bit chatty for a demo, so it's disabled
+/*
 player.on("timeupdate", ({ seconds, duration }) => {
-  println("Event: timeupdate " + JSON.stringify({ seconds, duration }));
+  println(
+    "Event: timeupdate " + JSON.stringify({ seconds, duration }, null, 2),
+  );
 });
+*/
 
 player.on("progress", ({ percent }) => {
-  println("Event: progress " + JSON.stringify({ percent }));
+  println("Event: progress " + JSON.stringify({ percent }, null, 2));
 });
 
 player.on("seeked", () => {
   println("Event: seeked");
 });
 
-player.on("error", () => {
-  println("Event: erorr");
+player.on("error", (error) => {
+  println("Event: error " + JSON.stringify(error, null, 2));
+});
+
+player.on("videochange", (video) => {
+  println("Event: videochange " + JSON.stringify(video, null, 2));
+});
+
+player.on("audiotrackchange", (track) => {
+  println("Event: audiotrackchange " + JSON.stringify(track, null, 2));
+});
+
+player.on("texttrackchange", (track) => {
+  println("Event: texttrackchange " + JSON.stringify(track, null, 2));
 });
 
 document.getElementById("btn-seek").addEventListener("click", () => {

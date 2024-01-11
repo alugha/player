@@ -35,7 +35,8 @@
     "compile": "yarn compile:esm && yarn compile:cjs",
     "compile:esm": "tsc --project tsconfig.json",
     "compile:cjs": "tsc --project tsconfig.cjs.json",
-    "example": "yarn compile && rimraf example/lib && cp -r lib example/lib && serve example",
+    "example:build": "yarn compile && rimraf example/lib && cp -r lib example/lib",
+    "example": "yarn example:build && serve example",
     "docs:build": "typedoc src",
     "docs": "yarn docs:build && serve docs"
   },
