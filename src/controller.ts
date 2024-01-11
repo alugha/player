@@ -8,7 +8,7 @@ import {
 } from "./data.js";
 import { isString, parseOrigin } from "./utils.js";
 
-type Callback<T> = (data: T) => void;
+export type Callback<T> = (data: T) => void;
 
 export class Controller {
   private iframe: HTMLIFrameElement;
@@ -40,22 +40,44 @@ export class Controller {
     this.activate();
   }
 
+  /**
+   * Start listening to feedback from the alugha player
+   * (called automatically on construction).
+   */
   public activate() {
     window.addEventListener("message", this.receive);
   }
 
+  /**
+   * Stop listening to feedback from the alugha player.
+   */
   public destroy() {
     window.removeEventListener("message", this.receive);
   }
 
+  /**
+   * Add a listener callback for an event type.
+   * @param event The event to listen on.
+   * @param callback The callback to invoke when the event is triggered.
+   */
   public on<T extends EventType>(event: T, callback: Callback<EventData[T]>) {
     this.send(MethodType.AddEventListener, event, callback);
   }
 
+  /**
+   * Add a listener callback for an event type.
+   * @param event The event to stop listening on.
+   * @param callback The callback to remove from the specified event.
+   */
   public off<T extends EventType>(event: T, callback: Callback<EventData[T]>) {
     this.send(MethodType.RemoveEventListener, event, callback);
   }
 
+  /**
+   * Wait until an event has been triggered.
+   * @param event The even to listen on.
+   * @returns A promise that resolves when the event is triggered.
+   */
   public once<T extends EventType>(event: T): Promise<EventData[T]> {
     return new Promise((resolve) => {
       const callback = (data: EventData[T]) => {
@@ -66,50 +88,93 @@ export class Controller {
     });
   }
 
+  /**
+   * Begin or resume playback of the video.
+   */
   public play() {
     this.send(MethodType.Play);
   }
 
+  /**
+   * Interrupt playback of the video.
+   */
   public pause() {
     this.send(MethodType.Pause);
   }
 
+  /**
+   * Whether the video is currently paused.
+   * Returns a promise that resolve with the actual value.
+   */
   public get paused(): Promise<boolean> {
     return this.get(MethodType.GetPaused);
   }
 
+  /**
+   * Set whether the video should play without audio.
+   */
   public set muted(muted: boolean) {
     this.send(muted ? MethodType.Mute : MethodType.Unmute);
   }
 
+  /**
+   * Whether the video is currently muted.
+   * Returns a promise that resolve with the actual value.
+   */
   public get muted(): Promise<boolean> {
     return this.get(MethodType.GetMuted);
   }
 
+  /**
+   * Set the audio volume the video should use for playback.
+   */
   public set volume(volume: number) {
     this.send(MethodType.SetVolume, volume);
   }
 
+  /**
+   * The audio volume the video is playing with.
+   * Returns a promise that resolve with the actual value.
+   */
   public get volume(): Promise<number> {
     return this.get(MethodType.GetVolume);
   }
 
+  /**
+   * The video duration in seconds.
+   * Returns a promise that resolve with the actual value.
+   */
   public get duration(): Promise<number> {
     return this.get(MethodType.GetDuration);
   }
 
+  /**
+   * Set the timestamp from which the video should continue playback.
+   * Also known as seeking.
+   */
   public set currentTime(currentTime: number) {
     this.send(MethodType.SetCurrentTime, currentTime);
   }
 
+  /**
+   * The current timestamp the video is at in seconds.
+   * Returns a promise that resolve with the actual value.
+   */
   public get currentTime(): Promise<number> {
     return this.get(MethodType.GetCurrentTime);
   }
 
+  /**
+   * Set whether the video should restart playback when it finished.
+   */
   public set loop(loop: boolean) {
     this.send(MethodType.SetLoop, loop);
   }
 
+  /**
+   * Whether the video will restart playback when it finished.
+   * Returns a promise that resolve with the actual value.
+   */
   public get loop(): Promise<boolean> {
     return this.get(MethodType.GetLoop);
   }
