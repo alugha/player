@@ -15,7 +15,7 @@ const supportedMethods = Object.values(MethodType);
 const isSupportedEvent = (value: unknown): value is EventType =>
   supportedEvents.includes(value as EventType);
 
-export type { EventType, MethodType, MethodHandler };
+export { EventType, MethodType, MethodHandler };
 
 // Custom implementation of player.js provider
 export class Receiver {
