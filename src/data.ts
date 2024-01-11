@@ -161,6 +161,7 @@ export interface EventData {
   };
   /**
    * Information about the text track (closed captions or subtitles) that will be played.
+   * Can be null if the user disabled the text track.
    */
   [EventType.TextTrackChange]: {
     /**
@@ -184,7 +185,7 @@ export interface EventData {
      * The translated description of the video.
      */
     description: string | null;
-  };
+  } | null;
 }
 
 export enum MethodType {
