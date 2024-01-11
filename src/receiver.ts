@@ -15,6 +15,8 @@ const supportedMethods = Object.values(MethodType);
 const isSupportedEvent = (value: unknown): value is EventType =>
   supportedEvents.includes(value as EventType);
 
+export type { EventType, MethodType, MethodHandler };
+
 // Custom implementation of player.js provider
 export class Receiver {
   private active = false;
@@ -56,7 +58,7 @@ export class Receiver {
     this.methodHandlers.set(methodType, callback);
   }
 
-  public emit<T>(eventType: EventType, value?: T): boolean {
+  public emit<Value>(eventType: EventType, value?: Value): boolean {
     const listeners = this.eventListeners.get(eventType);
     if (!listeners) {
       return false;

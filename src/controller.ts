@@ -8,34 +8,20 @@ import {
 } from "./data.js";
 import { isString, parseOrigin } from "./utils.js";
 
-export type Callback<T> = (data: T) => void;
+/**
+ * A function to be invoked in reaction to an event.
+ * See {@link EventData} for the data types used by each event type.
+ */
+export type Callback<Data> = (data: Data) => void;
 
 export class Controller {
-  private iframe: HTMLIFrameElement;
   private origin: string;
   private isReady = false;
   private queue: MethodRequest<unknown>[] = [];
   private callbacks: Map<string, Callback<unknown>> = new Map();
   private listeners: Map<Callback<unknown>, string> = new Map();
 
-  constructor(iframe: HTMLIFrameElement | string) {
-    if (isString(iframe)) {
-      const element = document.getElementById(iframe);
-      if (!element) {
-        throw new Error(
-          `The provided iframe element id does not exist: ${iframe}`,
-        );
-      }
-      if (!(element instanceof HTMLIFrameElement)) {
-        throw new Error(
-          `The provided element id does not belong to an iframe: ${iframe}`,
-        );
-      }
-      this.iframe = element;
-    } else {
-      this.iframe = iframe;
-    }
-
+  constructor(private iframe: HTMLIFrameElement) {
     this.origin = parseOrigin(this.iframe.src);
     this.activate();
   }
@@ -57,30 +43,45 @@ export class Controller {
 
   /**
    * Add a listener callback for an event type.
+   * See {@link EventType} for the available event types and
+   * {@link EventData} for the data types used by each event type.
+   *
    * @param event The event to listen on.
    * @param callback The callback to invoke when the event is triggered.
    */
-  public on<T extends EventType>(event: T, callback: Callback<EventData[T]>) {
+  public on<EventName extends EventType>(
+    event: EventName,
+    callback: Callback<EventData[EventName]>,
+  ) {
     this.send(MethodType.AddEventListener, event, callback);
   }
 
   /**
    * Add a listener callback for an event type.
+   *
    * @param event The event to stop listening on.
    * @param callback The callback to remove from the specified event.
    */
-  public off<T extends EventType>(event: T, callback: Callback<EventData[T]>) {
+  public off<EventName extends EventType>(
+    event: EventName,
+    callback: Callback<EventData[EventName]>,
+  ) {
     this.send(MethodType.RemoveEventListener, event, callback);
   }
 
   /**
    * Wait until an event has been triggered.
+   * See {@link EventType} for the available event types and
+   * {@link EventData} for the data types used by each event type.
+   *
    * @param event The even to listen on.
    * @returns A promise that resolves when the event is triggered.
    */
-  public once<T extends EventType>(event: T): Promise<EventData[T]> {
+  public once<EventName extends EventType>(
+    event: EventName,
+  ): Promise<EventData[EventName]> {
     return new Promise((resolve) => {
-      const callback = (data: EventData[T]) => {
+      const callback = (data: EventData[EventName]) => {
         this.off(event, callback);
         resolve(data);
       };
@@ -149,7 +150,7 @@ export class Controller {
   }
 
   /**
-   * Set the timestamp from which the video should continue playback.
+   * Set the timestamp in seconds from which the video should continue playback.
    * Also known as seeking.
    */
   public set currentTime(currentTime: number) {
@@ -157,7 +158,7 @@ export class Controller {
   }
 
   /**
-   * The current timestamp the video is at in seconds.
+   * The current timestamp of the video in seconds.
    * Returns a promise that resolve with the actual value.
    */
   public get currentTime(): Promise<number> {
@@ -165,14 +166,14 @@ export class Controller {
   }
 
   /**
-   * Set whether the video should restart playback when it finished.
+   * Set whether the video should restart playback when it has ended.
    */
   public set loop(loop: boolean) {
     this.send(MethodType.SetLoop, loop);
   }
 
   /**
-   * Whether the video will restart playback when it finished.
+   * Whether the video will restart playback when it has ended.
    * Returns a promise that resolve with the actual value.
    */
   public get loop(): Promise<boolean> {
@@ -213,7 +214,7 @@ export class Controller {
     return true;
   }
 
-  private postMessage<T>(message: T) {
+  private postMessage<Message>(message: Message) {
     this.iframe.contentWindow?.postMessage(message, this.origin);
   }
 
@@ -234,9 +235,9 @@ export class Controller {
     return listener;
   }
 
-  private get<T>(method: MethodType): Promise<T> {
+  private get<Data>(method: MethodType): Promise<Data> {
     return new Promise((resolve) => {
-      const callback = (data: T) => {
+      const callback = (data: Data) => {
         this.removeListener(callback);
         resolve(data);
       };

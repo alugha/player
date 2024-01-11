@@ -14,5 +14,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["./typings/**/*", "./src/**/*"],
-  "exclude": ["./node_modules", "./lib"]
+  "exclude": ["./node_modules", "./lib", "./cjs"]
 }

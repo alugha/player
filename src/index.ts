@@ -1,4 +1,3 @@
-export * from "./controller.js";
-export * from "./data.js";
+export { EventType, EventData } from "./data.js";
+export type { Callback } from "./controller.js";
 export * from "./player.js";
-export * from "./receiver.js";

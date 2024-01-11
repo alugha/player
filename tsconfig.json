@@ -2,8 +2,8 @@
   "extends": "./tsconfig.base",
   "compilerOptions": {
     "module": "es2015",
-    "outDir": "./lib/esm",
+    "outDir": "./lib",
     "declaration": true,
-    "declarationDir": "./lib/typings"
+    "declarationDir": "./lib"
   }
 }

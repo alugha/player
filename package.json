@@ -11,16 +11,27 @@
   ],
   "license": "MIT",
   "files": [
-    "lib"
+    "lib",
+    "cjs"
   ],
-  "main": "lib/cjs/index.js",
-  "module": "lib/esm/index.js",
-  "typings": "lib/typings/index.d.ts",
+  "main": "cjs/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./cjs/index.js"
+    },
+    "./receiver": {
+      "import": "./lib/receiver.js",
+      "require": "./cjs/receiver.js"
+    }
+  },
   "scripts": {
     "precommit": "lint-staged",
     "prepare": "yarn compile",
     "lint": "eslint --ext .json,.js,.ts .",
-    "precompile": "rimraf lib",
+    "precompile": "rimraf lib cjs",
     "compile": "yarn compile:esm && yarn compile:cjs",
     "compile:esm": "tsc --project tsconfig.json",
     "compile:cjs": "tsc --project tsconfig.cjs.json",
