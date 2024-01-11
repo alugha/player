@@ -22,7 +22,7 @@
       "import": "./lib/index.js",
       "require": "./cjs/index.js"
     },
-    "./receiver": {
+    "./lib/receiver": {
       "import": "./lib/receiver.js",
       "require": "./cjs/receiver.js"
     }
