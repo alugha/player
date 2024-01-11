@@ -1,6 +1,7 @@
 import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants.js";
 import {
   EventType,
+  EventData,
   MethodHandler,
   MethodType,
   ResponseType,
@@ -15,7 +16,7 @@ const supportedMethods = Object.values(MethodType);
 const isSupportedEvent = (value: unknown): value is EventType =>
   supportedEvents.includes(value as EventType);
 
-export { EventType, MethodType, MethodHandler };
+export { EventType, EventData, MethodType, MethodHandler };
 
 // Custom implementation of player.js provider
 export class Receiver {
@@ -58,7 +59,10 @@ export class Receiver {
     this.methodHandlers.set(methodType, callback);
   }
 
-  public emit<Value>(eventType: EventType, value?: Value): boolean {
+  public emit<EventName extends EventType>(
+    eventType: EventName,
+    value?: EventData[EventName],
+  ): boolean {
     const listeners = this.eventListeners.get(eventType);
     if (!listeners) {
       return false;

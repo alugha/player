@@ -56,9 +56,22 @@ export enum EventType {
 
 export interface EventData {
   /**
-   * The ready event has no data.
+   * Information about the receiver.
    */
-  [EventType.Ready]: void;
+  [EventType.Ready]: {
+    /**
+     * The event types supported by the player.
+     */
+    events: string[];
+    /**
+     * The method types supported by the player.
+     */
+    methods: string[];
+    /**
+     * The URL of the embedded player.
+     */
+    src: string;
+  };
   /**
    * The play event has no data.
    */
@@ -94,9 +107,12 @@ export interface EventData {
    */
   [EventType.Seeked]: void;
   /**
-   * The error event has no data.
+   * The error that occured.
    */
-  [EventType.Error]: void;
+  [EventType.Error]: {
+    code: number;
+    msg: string;
+  };
 
   // The following events are not part of the original player.js protocol
   // and only supported by our implementation.
