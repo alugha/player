@@ -37,9 +37,12 @@ player.on("timeupdate", ({ seconds, duration }) => {
 });
 */
 
+// this can be a bit chatty for a demo, so it's disabled
+/*
 player.on("progress", ({ percent }) => {
   println("Event: progress " + JSON.stringify({ percent }, null, 2));
 });
+*/
 
 player.on("seeked", () => {
   println("Event: seeked");
