@@ -3,6 +3,9 @@ export var EventType;
     /**
      * Triggered when the player has finished initialization and can respond
      * to commands.
+     * This may happen more than once if a watchlist is specified.
+     * Unless {@link PlayerOptions.autoPlay} is enabled, this will only be
+     * triggered after the user has interacted with the player.
      */
     EventType["Ready"] = "ready";
     /**
@@ -38,13 +41,24 @@ export var EventType;
     // The following events are not part of the original player.js protocol
     // and only supported by our implementation.
     /**
-     * Triggered when a different video has been loaded. This may happen if a
-     * watchlist is specified.
+     * Triggered when the video has started to load.
+     * This may happen more than once if a watchlist is specified.
+     * If the {@link EventType.Ready} event has been triggered before,
+     * the ready state is invalidated by this event and commands will be queued
+     * internally until another {@link EventType.Ready} event is emitted.
+     */
+    EventType["VideoLoading"] = "videoloading";
+    /**
+     * Triggered when the video has been loaded.
+     * This may happen more than once if a watchlist is specified.
+     * If {@link PlayerOptions.autoPlay} is not enabled, this will not be
+     * triggered until the user has interacted with the player.
      */
     EventType["VideoChange"] = "videochange";
     /**
      * Triggered when the audio track has been changed. This may happen if the user
-     * has selected a different audio language from the settings menu.
+     * has selected a different audio language from the settings menu, but is also
+     * triggered on the initial start of a video.
      */
     EventType["AudioTrackChange"] = "audiotrackchange";
     /**
@@ -71,3 +85,12 @@ export var MethodType;
     MethodType["RemoveEventListener"] = "removeEventListener";
     MethodType["AddEventListener"] = "addEventListener";
 })(MethodType || (MethodType = {}));
+export var ErrorCode;
+(function (ErrorCode) {
+    ErrorCode[ErrorCode["Unknown"] = -1] = "Unknown";
+    ErrorCode[ErrorCode["UnsupportedDeviceOrBrowser"] = 1] = "UnsupportedDeviceOrBrowser";
+    ErrorCode[ErrorCode["InvalidMethod"] = 2] = "InvalidMethod";
+    ErrorCode[ErrorCode["MethodNotSupported"] = 3] = "MethodNotSupported";
+    ErrorCode[ErrorCode["VideoNotFound"] = 4] = "VideoNotFound";
+    ErrorCode[ErrorCode["EmbedNotAllowed"] = 5] = "EmbedNotAllowed";
+})(ErrorCode || (ErrorCode = {}));

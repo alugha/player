@@ -94,6 +94,9 @@ export class Receiver {
         return true;
     }
     ready() {
+        if (this.isReady) {
+            return;
+        }
         this.isReady = true;
         const data = {
             events: supportedEvents,

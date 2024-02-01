@@ -1,9 +1,27 @@
 import { Controller } from "./controller.js";
 import { isString } from "./utils.js";
+export var UserInterfaceLanguage;
+(function (UserInterfaceLanguage) {
+    UserInterfaceLanguage["Arabic"] = "ar";
+    UserInterfaceLanguage["Catalan"] = "ca";
+    UserInterfaceLanguage["German"] = "de";
+    UserInterfaceLanguage["Greek"] = "el";
+    UserInterfaceLanguage["English"] = "en";
+    UserInterfaceLanguage["Spanish"] = "es";
+    UserInterfaceLanguage["French"] = "fr";
+    UserInterfaceLanguage["Hindi"] = "hi";
+    UserInterfaceLanguage["Italian"] = "it";
+    UserInterfaceLanguage["Japanese"] = "ja";
+    UserInterfaceLanguage["Dutch"] = "nl";
+    UserInterfaceLanguage["Polish"] = "pl";
+    UserInterfaceLanguage["Russian"] = "ru";
+    UserInterfaceLanguage["Serbian"] = "sr";
+    UserInterfaceLanguage["Chinese"] = "zh";
+})(UserInterfaceLanguage || (UserInterfaceLanguage = {}));
 export class Player extends Controller {
     constructor(options) {
         var _a;
-        const { videoId, mountPoint, accentColor, brandId, watchlistId, showUnlistedTracks, audioLanguage, textLanguage, startAt, autoPlay = false, loop = false, muted = false, targetScreenResolution = false, allowFullscreen = true, allowPictureInPicture = true, hideAlughaLogo = false, hideControls = false, size = { aspectRatio: 16 / 9 }, replaceMountPoint = false, base = "https://alugha.com", } = options;
+        const { videoId, mountPoint, accentColor, brandId, watchlistId, showUnlistedTracks, audioLanguage, textLanguage, userInterfaceLanguage, startAt, autoPlay = false, loop = false, muted = false, targetScreenResolution = false, allowFullscreen = true, allowPictureInPicture = true, hideAlughaLogo = false, hideControls = false, size = { aspectRatio: 16 / 9 }, replaceMountPoint = false, base = "https://alugha.com", } = options;
         const params = new URLSearchParams({ v: videoId });
         const iframeAllow = [];
         const iframe = document.createElement("iframe");
@@ -27,6 +45,9 @@ export class Player extends Controller {
         }
         if (textLanguage) {
             params.set("sub", textLanguage);
+        }
+        if (userInterfaceLanguage) {
+            params.set("locale", userInterfaceLanguage);
         }
         if (startAt) {
             params.set("time", startAt.toString());

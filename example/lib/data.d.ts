@@ -2,6 +2,9 @@ export declare enum EventType {
     /**
      * Triggered when the player has finished initialization and can respond
      * to commands.
+     * This may happen more than once if a watchlist is specified.
+     * Unless {@link PlayerOptions.autoPlay} is enabled, this will only be
+     * triggered after the user has interacted with the player.
      */
     Ready = "ready",
     /**
@@ -35,13 +38,24 @@ export declare enum EventType {
      */
     Error = "error",
     /**
-     * Triggered when a different video has been loaded. This may happen if a
-     * watchlist is specified.
+     * Triggered when the video has started to load.
+     * This may happen more than once if a watchlist is specified.
+     * If the {@link EventType.Ready} event has been triggered before,
+     * the ready state is invalidated by this event and commands will be queued
+     * internally until another {@link EventType.Ready} event is emitted.
+     */
+    VideoLoading = "videoloading",
+    /**
+     * Triggered when the video has been loaded.
+     * This may happen more than once if a watchlist is specified.
+     * If {@link PlayerOptions.autoPlay} is not enabled, this will not be
+     * triggered until the user has interacted with the player.
      */
     VideoChange = "videochange",
     /**
      * Triggered when the audio track has been changed. This may happen if the user
-     * has selected a different audio language from the settings menu.
+     * has selected a different audio language from the settings menu, but is also
+     * triggered on the initial start of a video.
      */
     AudioTrackChange = "audiotrackchange",
     /**
@@ -106,8 +120,14 @@ export interface EventData {
      * The error that occured.
      */
     [EventType.Error]: {
-        code: number;
+        code: ErrorCode;
         msg: string;
+    };
+    /**
+     * Information about the video that will be loaded.
+     */
+    [EventType.VideoLoading]: {
+        videoId: string;
     };
     /**
      * Information about the video that will be played.
@@ -212,4 +232,12 @@ export interface MethodResponse<Value> {
     event: ResponseType;
     value: Value;
     listener?: string;
+}
+export declare enum ErrorCode {
+    Unknown = -1,
+    UnsupportedDeviceOrBrowser = 1,
+    InvalidMethod = 2,
+    MethodNotSupported = 3,
+    VideoNotFound = 4,
+    EmbedNotAllowed = 5
 }
