@@ -7,6 +7,7 @@ import {
   ResponseType,
   MethodRequest,
   MethodResponse,
+  ErrorCode,
 } from "./data.js";
 import { isString, parseOrigin } from "./utils.js";
 
@@ -16,7 +17,7 @@ const supportedMethods = Object.values(MethodType);
 const isSupportedEvent = (value: unknown): value is EventType =>
   supportedEvents.includes(value as EventType);
 
-export { EventType, EventData, MethodType, MethodHandler };
+export { EventType, EventData, MethodType, MethodHandler, ErrorCode };
 
 // Custom implementation of player.js provider
 export class Receiver {
