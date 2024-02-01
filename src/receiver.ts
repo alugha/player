@@ -74,6 +74,9 @@ export class Receiver {
   }
 
   public ready(): void {
+    if (this.isReady) {
+      return;
+    }
     this.isReady = true;
     const data = {
       events: supportedEvents,
