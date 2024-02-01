@@ -1,6 +1,6 @@
 {
   "name": "@alugha/player",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A lightweight SDK for embedding and controlling the alugha player.",
   "homepage": "https://alugha.github.io/player/",
   "repository": "https://github.com/alugha/player",
