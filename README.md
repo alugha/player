@@ -9,6 +9,10 @@ npm install --save @alugha/player
 yarn add @alugha/player
 ```
 
+## Documentation
+
+The documentation of the alugha player SDK can be access at <https://alugha.github.io/player/>.
+
 ## Example
 
 You can find an interactive example on <https://alugha.github.io/player/example/>.
@@ -45,5 +49,5 @@ player.currentTime = 42;
 console.log("Video duration:", await player.duration);
 ```
 
-You can find all available event types in [`src/data.ts`](./src/data.ts);
-Player methods, such as seeking, pausing, or getting the duration, can be found in [`src/player.ts`](./src/player.ts).
+You can find all available event types in inside the documentation at <https://alugha.github.io/player/enums/EventType.html>.
+Player methods, such as seeking, pausing, or getting the duration, can be found at <https://alugha.github.io/player/classes/Player.html>.
