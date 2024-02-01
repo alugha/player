@@ -49,5 +49,5 @@ player.currentTime = 42;
 console.log("Video duration:", await player.duration);
 ```
 
-You can find all available event types in inside the documentation at <https://alugha.github.io/player/enums/EventType.html>.
+You can find all available event types inside the documentation at <https://alugha.github.io/player/enums/EventType.html>.
 Player methods, such as seeking, pausing, or getting the duration, can be found at <https://alugha.github.io/player/classes/Player.html>.
