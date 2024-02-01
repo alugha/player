@@ -264,6 +264,9 @@ export class Controller {
   }
 
   private onReady() {
+    if (this.isReady) {
+      return;
+    }
     this.isReady = true;
     for (const request of this.queue) {
       this.postMessage(request);
