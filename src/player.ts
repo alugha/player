@@ -19,6 +19,24 @@ export interface StaticSize {
   height: number;
 }
 
+export enum UserInterfaceLanguage {
+  Arabic = "ar",
+  Catalan = "ca",
+  German = "de",
+  Greek = "el",
+  English = "en",
+  Spanish = "es",
+  French = "fr",
+  Hindi = "hi",
+  Italian = "it",
+  Japanese = "ja",
+  Dutch = "nl",
+  Polish = "pl",
+  Russian = "ru",
+  Serbian = "sr",
+  Chinese = "zh",
+}
+
 export interface PlayerOptions {
   /**
    * The id of the video to embed.
@@ -78,6 +96,13 @@ export interface PlayerOptions {
    * Disabled by default.
    */
   textLanguage?: string;
+  /**
+   * The language code to use for the user interface of the player.
+   * Must be one of the locales defined in {@link UserInterfaceLanguage}.
+   *
+   * Defaults to the browser language if available, using English as fallback.
+   */
+  userInterfaceLanguage?: UserInterfaceLanguage;
   /**
    * Timestamp in seconds from which playback will start.
    *
@@ -186,6 +211,7 @@ export class Player extends Controller {
       showUnlistedTracks,
       audioLanguage,
       textLanguage,
+      userInterfaceLanguage,
       startAt,
       autoPlay = false,
       loop = false,
@@ -229,6 +255,10 @@ export class Player extends Controller {
 
     if (textLanguage) {
       params.set("sub", textLanguage);
+    }
+
+    if (userInterfaceLanguage) {
+      params.set("locale", userInterfaceLanguage);
     }
 
     if (startAt) {
