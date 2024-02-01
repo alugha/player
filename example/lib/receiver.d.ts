@@ -1,5 +1,5 @@
-import { EventType, EventData, MethodHandler, MethodType } from "./data.js";
-export { EventType, EventData, MethodType, MethodHandler };
+import { EventType, EventData, MethodHandler, MethodType, ErrorCode } from "./data.js";
+export { EventType, EventData, MethodType, MethodHandler, ErrorCode };
 export declare class Receiver {
     private active;
     private isReady;
@@ -13,6 +13,7 @@ export declare class Receiver {
     on(methodType: MethodType, callback: MethodHandler<unknown, unknown>): void;
     emit<EventName extends EventType>(eventType: EventName, value?: EventData[EventName]): boolean;
     ready(): void;
+    resetReady(): void;
     private receive;
     private addEventListener;
     private removeEventListener;

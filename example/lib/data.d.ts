@@ -38,11 +38,13 @@ export declare enum EventType {
      */
     Error = "error",
     /**
+     * The ready state is invalidated by this event and commands will be queued
+     * internally until another {@link EventType.Ready} event is emitted.
+     */
+    ResetReady = "resetready",
+    /**
      * Triggered when the video has started to load.
      * This may happen more than once if a watchlist is specified.
-     * If the {@link EventType.Ready} event has been triggered before,
-     * the ready state is invalidated by this event and commands will be queued
-     * internally until another {@link EventType.Ready} event is emitted.
      */
     VideoLoading = "videoloading",
     /**
@@ -123,6 +125,10 @@ export interface EventData {
         code: ErrorCode;
         msg: string;
     };
+    /**
+     * The resetready event has no data.
+     */
+    [EventType.ResetReady]: void;
     /**
      * Information about the video that will be loaded.
      */

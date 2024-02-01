@@ -31,7 +31,7 @@ export declare class Controller {
      */
     on<EventName extends EventType>(event: EventName, callback: Callback<EventData[EventName]>): void;
     /**
-     * Add a listener callback for an event type.
+     * Remove a listener callback from an event type.
      *
      * @param event The event to stop listening on.
      * @param callback The callback to remove from the specified event.
@@ -107,5 +107,6 @@ export declare class Controller {
     private removeListener;
     private get;
     private onReady;
+    private resetReady;
     private receive;
 }

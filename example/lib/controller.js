@@ -8,13 +8,6 @@ export class Controller {
         this.queue = [];
         this.callbacks = new Map();
         this.listeners = new Map();
-        this.onReady = () => {
-            this.isReady = true;
-            for (const request of this.queue) {
-                this.postMessage(request);
-            }
-            this.queue = [];
-        };
         this.receive = (e) => {
             if (e.origin !== this.origin) {
                 return;
@@ -34,10 +27,17 @@ export class Controller {
             if (data.context !== PLAYERJS_CONTEXT) {
                 return;
             }
-            if (!data.listener) {
-                if (data.event === EventType.Ready) {
+            switch (data.event) {
+                case EventType.Ready:
                     this.onReady();
-                }
+                    break;
+                case EventType.ResetReady:
+                    this.resetReady();
+                    break;
+                default:
+                    break;
+            }
+            if (!data.listener) {
                 return;
             }
             const callback = this.callbacks.get(data.listener);
@@ -73,7 +73,7 @@ export class Controller {
         this.send(MethodType.AddEventListener, event, callback);
     }
     /**
-     * Add a listener callback for an event type.
+     * Remove a listener callback from an event type.
      *
      * @param event The event to stop listening on.
      * @param callback The callback to remove from the specified event.
@@ -180,14 +180,15 @@ export class Controller {
     send(method, value, callback) {
         let listener = undefined;
         if (callback) {
+            const eventName = isString(value) ? value : "internal";
             if (method === MethodType.RemoveEventListener) {
-                listener = this.removeListener(callback);
+                listener = this.removeListener(eventName, callback);
                 if (!listener) {
                     return false;
                 }
             }
             else {
-                listener = this.addListener(callback);
+                listener = this.addListener(eventName, callback);
             }
         }
         const request = {
@@ -208,28 +209,56 @@ export class Controller {
         var _a;
         (_a = this.iframe.contentWindow) === null || _a === void 0 ? void 0 : _a.postMessage(message, this.origin);
     }
-    addListener(callback) {
+    addListener(eventName, callback) {
         const listener = "listener-" + window.crypto.randomUUID();
-        this.callbacks.set(listener, callback);
-        this.listeners.set(callback, listener);
+        const cb = callback;
+        this.callbacks.set(listener, cb);
+        const eventListenerIds = this.listeners.get(cb);
+        if (eventListenerIds) {
+            eventListenerIds[eventName] = listener;
+        }
+        else {
+            this.listeners.set(cb, { [eventName]: listener });
+        }
         return listener;
     }
-    removeListener(callback) {
-        const listener = this.listeners.get(callback);
+    removeListener(eventName, callback) {
+        const cb = callback;
+        const eventListenerIds = this.listeners.get(cb);
+        if (!eventListenerIds) {
+            return;
+        }
+        const listener = eventListenerIds[eventName];
         if (!listener) {
             return;
         }
-        this.listeners.delete(callback);
+        delete eventListenerIds[eventName];
+        if (Object.keys(eventListenerIds).length === 0) {
+            this.listeners.delete(cb);
+        }
         this.callbacks.delete(listener);
         return listener;
     }
     get(method) {
         return new Promise((resolve) => {
             const callback = (data) => {
-                this.removeListener(callback);
+                this.removeListener("internal", callback);
                 resolve(data);
             };
             this.send(method, undefined, callback);
         });
+    }
+    onReady() {
+        if (this.isReady) {
+            return;
+        }
+        this.isReady = true;
+        for (const request of this.queue) {
+            this.postMessage(request);
+        }
+        this.queue = [];
+    }
+    resetReady() {
+        this.isReady = false;
     }
 }

@@ -41,11 +41,13 @@ export var EventType;
     // The following events are not part of the original player.js protocol
     // and only supported by our implementation.
     /**
+     * The ready state is invalidated by this event and commands will be queued
+     * internally until another {@link EventType.Ready} event is emitted.
+     */
+    EventType["ResetReady"] = "resetready";
+    /**
      * Triggered when the video has started to load.
      * This may happen more than once if a watchlist is specified.
-     * If the {@link EventType.Ready} event has been triggered before,
-     * the ready state is invalidated by this event and commands will be queued
-     * internally until another {@link EventType.Ready} event is emitted.
      */
     EventType["VideoLoading"] = "videoloading";
     /**

@@ -1,10 +1,10 @@
 import { PLAYERJS_CONTEXT, PLAYERJS_VERSION } from "./constants.js";
-import { EventType, MethodType, } from "./data.js";
+import { EventType, MethodType, ErrorCode, } from "./data.js";
 import { isString, parseOrigin } from "./utils.js";
 const supportedEvents = Object.values(EventType);
 const supportedMethods = Object.values(MethodType);
 const isSupportedEvent = (value) => supportedEvents.includes(value);
-export { EventType, MethodType };
+export { EventType, MethodType, ErrorCode };
 // Custom implementation of player.js provider
 export class Receiver {
     constructor() {
@@ -37,7 +37,7 @@ export class Receiver {
             }
             if (!supportedMethods.includes(data.method)) {
                 this.emit(EventType.Error, {
-                    code: 2,
+                    code: ErrorCode.InvalidMethod,
                     msg: `Invalid method "${data.method}"`,
                 });
                 return false;
@@ -107,6 +107,12 @@ export class Receiver {
             this.send(EventType.Ready, data);
         }
     }
+    resetReady() {
+        this.isReady = false;
+        if (!this.emit(EventType.ResetReady, undefined)) {
+            this.send(EventType.ResetReady, undefined);
+        }
+    }
     addEventListener(eventType, listener) {
         const listeners = this.eventListeners.get(eventType);
         if (listeners) {
@@ -133,7 +139,7 @@ export class Receiver {
         const handler = this.methodHandlers.get(methodType);
         if (!handler) {
             this.emit(EventType.Error, {
-                code: 3,
+                code: ErrorCode.MethodNotSupported,
                 msg: `Method not supported: "${methodType}"`,
             });
             return false;
