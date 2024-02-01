@@ -19,7 +19,7 @@ export class Controller {
   private isReady = false;
   private queue: MethodRequest<unknown>[] = [];
   private callbacks: Map<string, Callback<unknown>> = new Map();
-  private listeners: Map<Callback<unknown>, string> = new Map();
+  private listeners: Map<Callback<unknown>, Record<string, string>> = new Map();
 
   constructor(private iframe: HTMLIFrameElement) {
     this.origin = parseOrigin(this.iframe.src);
@@ -57,7 +57,7 @@ export class Controller {
   }
 
   /**
-   * Add a listener callback for an event type.
+   * Remove a listener callback from an event type.
    *
    * @param event The event to stop listening on.
    * @param callback The callback to remove from the specified event.
@@ -187,13 +187,14 @@ export class Controller {
   ): boolean {
     let listener: string | undefined = undefined;
     if (callback) {
+      const eventName = isString(value) ? value : "internal";
       if (method === MethodType.RemoveEventListener) {
-        listener = this.removeListener(callback);
+        listener = this.removeListener(eventName, callback);
         if (!listener) {
           return false;
         }
       } else {
-        listener = this.addListener(callback);
+        listener = this.addListener(eventName, callback);
       }
     }
 
@@ -218,19 +219,36 @@ export class Controller {
     this.iframe.contentWindow?.postMessage(message, this.origin);
   }
 
-  private addListener<Ret>(callback: Callback<Ret>): string {
+  private addListener<Ret>(eventName: string, callback: Callback<Ret>): string {
     const listener = "listener-" + window.crypto.randomUUID();
-    this.callbacks.set(listener, callback as Callback<unknown>);
-    this.listeners.set(callback as Callback<unknown>, listener);
+    const cb = callback as Callback<unknown>;
+    this.callbacks.set(listener, cb);
+    const eventListenerIds = this.listeners.get(cb);
+    if (eventListenerIds) {
+      eventListenerIds[eventName] = listener;
+    } else {
+      this.listeners.set(cb, { [eventName]: listener });
+    }
     return listener;
   }
 
-  private removeListener<Ret>(callback: Callback<Ret>): string | undefined {
-    const listener = this.listeners.get(callback as Callback<unknown>);
+  private removeListener<Ret>(
+    eventName: string,
+    callback: Callback<Ret>,
+  ): string | undefined {
+    const cb = callback as Callback<unknown>;
+    const eventListenerIds = this.listeners.get(cb);
+    if (!eventListenerIds) {
+      return;
+    }
+    const listener = eventListenerIds[eventName];
     if (!listener) {
       return;
     }
-    this.listeners.delete(callback as Callback<unknown>);
+    delete eventListenerIds[eventName];
+    if (Object.keys(eventListenerIds).length === 0) {
+      this.listeners.delete(cb);
+    }
     this.callbacks.delete(listener);
     return listener;
   }
@@ -238,7 +256,7 @@ export class Controller {
   private get<Data>(method: MethodType): Promise<Data> {
     return new Promise((resolve) => {
       const callback = (data: Data) => {
-        this.removeListener(callback);
+        this.removeListener("internal", callback);
         resolve(data);
       };
       this.send(method, undefined, callback);
