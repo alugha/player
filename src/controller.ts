@@ -263,13 +263,17 @@ export class Controller {
     });
   }
 
-  private onReady = () => {
+  private onReady() {
     this.isReady = true;
     for (const request of this.queue) {
       this.postMessage(request);
     }
     this.queue = [];
-  };
+  }
+
+  private resetReady() {
+    this.isReady = false;
+  }
 
   private receive = (e: MessageEvent) => {
     if (e.origin !== this.origin) {
@@ -291,10 +295,18 @@ export class Controller {
       return;
     }
 
-    if (!data.listener) {
-      if (data.event === EventType.Ready) {
+    switch (data.event) {
+      case EventType.Ready:
         this.onReady();
-      }
+        break;
+      case EventType.ResetReady:
+        this.resetReady();
+        break;
+      default:
+        break;
+    }
+
+    if (!data.listener) {
       return;
     }
 

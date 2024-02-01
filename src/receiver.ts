@@ -89,6 +89,13 @@ export class Receiver {
     }
   }
 
+  public resetReady(): void {
+    this.isReady = false;
+    if (!this.emit(EventType.ResetReady, undefined)) {
+      this.send(EventType.ResetReady, undefined);
+    }
+  }
+
   private receive = (e: MessageEvent) => {
     if (e.origin !== this.origin) {
       return false;
@@ -112,7 +119,7 @@ export class Receiver {
 
     if (!supportedMethods.includes(data.method)) {
       this.emit(EventType.Error, {
-        code: 2,
+        code: ErrorCode.InvalidMethod,
         msg: `Invalid method "${data.method}"`,
       });
       return false;
@@ -171,7 +178,7 @@ export class Receiver {
     const handler = this.methodHandlers.get(methodType);
     if (!handler) {
       this.emit(EventType.Error, {
-        code: 3,
+        code: ErrorCode.MethodNotSupported,
         msg: `Method not supported: "${methodType}"`,
       });
       return false;
