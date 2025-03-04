@@ -17,7 +17,7 @@ export class Controller {
                 try {
                     data = JSON.parse(e.data);
                 }
-                catch (ex) {
+                catch (_a) {
                     return;
                 }
             }

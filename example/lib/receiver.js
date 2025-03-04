@@ -24,7 +24,7 @@ export class Receiver {
                 try {
                     data = JSON.parse(e.data);
                 }
-                catch (ex) {
+                catch (_a) {
                     return false;
                 }
             }
