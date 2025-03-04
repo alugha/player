@@ -287,7 +287,7 @@ export class Controller {
     if (isString(e.data)) {
       try {
         data = JSON.parse(e.data);
-      } catch (ex) {
+      } catch {
         return;
       }
     } else {

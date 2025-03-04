@@ -30,7 +30,7 @@
   "scripts": {
     "precommit": "lint-staged",
     "prepare": "yarn compile",
-    "lint": "eslint --ext .json,.js,.ts .",
+    "lint": "eslint --ext .js,.ts .",
     "precompile": "rimraf lib cjs",
     "compile": "yarn compile:esm && yarn compile:cjs",
     "compile:esm": "tsc --project tsconfig.json",
@@ -41,27 +41,29 @@
     "docs": "yarn docs:build && serve docs"
   },
   "lint-staged": {
-    "*.{js,ts,json}": [
-      "eslint --ext .json,.js,.ts --fix",
+    "*.{js,ts}": [
+      "eslint --ext .js,.ts --fix",
       "git add"
     ],
-    "*.md": [
+    "*.{json,md}": [
       "prettier --write",
       "git add"
     ]
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
-    "@typescript-eslint/parser": "^6.17.0",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.2",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.1.1",
-    "rimraf": "^5.0.5",
-    "serve": "^14.2.1",
-    "typedoc": "^0.25.7",
-    "typescript": "^5.3.3"
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-prettier": "^5.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "serve": "^14.2.4",
+    "typedoc": "^0.27.9",
+    "typescript": "^5.8.2"
   }
 }

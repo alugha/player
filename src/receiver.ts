@@ -105,7 +105,7 @@ export class Receiver {
     if (isString(e.data)) {
       try {
         data = JSON.parse(e.data);
-      } catch (ex) {
+      } catch {
         return false;
       }
     } else {
