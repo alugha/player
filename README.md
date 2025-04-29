@@ -11,7 +11,7 @@ yarn add @alugha/player
 
 ## Documentation
 
-The documentation of the alugha player SDK can be access at <https://alugha.github.io/player/>.
+The documentation of the alugha player SDK can be accessed at <https://alugha.github.io/player/>.
 
 ## Example
 
