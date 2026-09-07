@@ -1,5 +1,8 @@
-on: push
 name: Deploy on push
+on:
+  push:
+    branches:
+      - main
 jobs:
   docs:
     name: Documentation
@@ -19,7 +22,7 @@ jobs:
       - name: Build example
         run: yarn example:build && cp -r example docs/example
       - name: Publish
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
